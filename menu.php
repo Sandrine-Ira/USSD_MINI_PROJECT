@@ -1,39 +1,21 @@
 <?php
-include 'util.php';
+// Add the Sms class at the beginning of your file
 include 'db.php';
-
+include 'sms.php';
 
 class Menu {
     protected $phoneNumber;
     protected $conn;
+    protected $sms;
 
     function __construct($phoneNumber) {
         $this->phoneNumber = $phoneNumber;
         $db = new DB();
         $this->conn = $db->connect();
+        $this->sms = new Sms($phoneNumber); // Instantiate the Sms class
     }
 
-    public function isUserRegistered() {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE phone_number = ?");
-        $stmt->execute([$this->phoneNumber]);
-        return $stmt->rowCount() > 0;
-    }
-
-    public function mainMenuUnregistered() {
-        echo "CON Welcome to Expense Tracker\n";
-        echo "1. Register\n";
-        
-    }
-
-    public function mainMenuRegistered() {
-        echo "CON Expense Tracker Main Menu\n";
-        echo "1. Add Category & Budget\n";
-        echo "2. Add Expense\n";
-        echo "3. View Expenses\n";
-        echo "4. View Remaining Budget\n";
-        //echo "\n" . Util::$GO_TO_MAIN_MENU . ". Main Menu\n" . Util::$GO_BACK . ". Back";
-    }
-
+    // After user registration
     public function menuRegister($textArray) {
         $level = count($textArray);
         if ($level == 1) {
@@ -46,9 +28,14 @@ class Menu {
             $stmt = $this->conn->prepare("INSERT INTO users (fullname, pin, phone_number) VALUES (?, ?, ?)");
             $stmt->execute([$name, $pin, $this->phoneNumber]);
             echo "END $name, you are now registered.";
+
+            // Send SMS to the user after registration
+            $message = "Hello $name, you have successfully registered for the Expense Tracker.";
+            $this->sms->sendSms($message, $this->phoneNumber);
         }
     }
 
+    // After adding a category
     public function menuAddCategory($textArray) {
         $level = count($textArray);
         if ($level == 1) {
@@ -61,9 +48,14 @@ class Menu {
             $stmt = $this->conn->prepare("INSERT INTO categories (phone_number, category_name, budget) VALUES (?, ?, ?)");
             $stmt->execute([$this->phoneNumber, $category, $budget]);
             echo "END Category '$category' with budget $budget RWF saved.";
+
+            // Send SMS to the user after adding the category
+            $message = "You have successfully added a category '$category' with a budget of $budget RWF.";
+            $this->sms->sendSms($message, $this->phoneNumber);
         }
     }
 
+    // After adding an expense
     public function menuAddExpense($textArray) {
         $stmt = $this->conn->prepare("SELECT * FROM categories WHERE phone_number = ?");
         $stmt->execute([$this->phoneNumber]);
@@ -103,12 +95,21 @@ class Menu {
 
             if ((float)$totalSpent > (float)$budget) {
                 echo "END Alert: You’ve exceeded your budget for " . $category['category_name'] . "!";
+
+                // Send SMS about exceeding the budget
+                $message = "Alert: You've exceeded your budget for the category '$category[category_name]'.";
+                $this->sms->sendSms($message, $this->phoneNumber);
             } else {
                 echo "END Expense saved under " . $category['category_name'] . ".";
+
+                // Send SMS confirming the expense
+                $message = "Your expense under the category '$category[category_name]' has been recorded. Amount: $amount RWF.";
+                $this->sms->sendSms($message, $this->phoneNumber);
             }
         }
     }
 
+    // After viewing expenses
     public function menuViewExpenses() {
         $stmt = $this->conn->prepare("SELECT c.category_name, SUM(e.amount) AS total FROM expenses e JOIN categories c ON e.category_id = c.id WHERE e.phone_number = ? GROUP BY c.category_name");
         $stmt->execute([$this->phoneNumber]);
@@ -119,8 +120,13 @@ class Menu {
             $response .= $row['category_name'] . ": " . $row['total'] . "\n";
         }
         echo $response;
+
+        // Send SMS after viewing expenses
+        $message = "You have viewed your expenses. Details:\n" . $response;
+        $this->sms->sendSms($message, $this->phoneNumber);
     }
 
+    // After viewing remaining budget
     public function menuRemainingBudget() {
         $stmt = $this->conn->prepare("SELECT c.category_name, c.budget, IFNULL(SUM(e.amount), 0) AS spent FROM categories c LEFT JOIN expenses e ON c.id = e.category_id WHERE c.phone_number = ? GROUP BY c.id");
         $stmt->execute([$this->phoneNumber]);
@@ -132,26 +138,9 @@ class Menu {
             $response .= $row['category_name'] . ": " . $remaining . " left\n";
         }
         echo $response;
-    }
 
-    public function goBack($text) {
-        $exploded = explode("*", $text);
-        while (($i = array_search(Util::$GO_BACK, $exploded)) !== false) {
-            array_splice($exploded, $i - 1, 2);
-        }
-        return join("*", $exploded);
-    }
-
-    public function goToMainMenu($text) {
-        $exploded = explode("*", $text);
-        while (($i = array_search(Util::$GO_TO_MAIN_MENU, $exploded)) !== false) {
-            $exploded = array_slice($exploded, $i + 1);
-        }
-        return join("*", $exploded);
-    }
-
-    public function middleware($text) {
-        return $this->goBack($this->goToMainMenu($text));
+        // Send SMS after viewing remaining budget
+        $message = "You have viewed your remaining budgets. Details:\n" . $response;
+        $this->sms->sendSms($message, $this->phoneNumber);
     }
 }
-?>
