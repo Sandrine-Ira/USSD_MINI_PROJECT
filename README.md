@@ -1,4 +1,4 @@
-##USSD and SMS Expense Tracker System
+#USSD and SMS Expense Tracker System
 A comprehensive expense tracking system that allows users to manage their finances via USSD and SMS, providing an easy-to-use interface for managing expenses and budgets.
 
 ##Features
