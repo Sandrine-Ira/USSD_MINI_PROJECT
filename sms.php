@@ -1,28 +1,30 @@
 <?php
+//require_once '/vendor/autoload.php';
 require 'vendor/autoload.php';
+
+//use GuzzleHttp\Client;
 use AfricasTalking\SDK\AfricasTalking;
 
-class Sms
-{
-    protected $phone;
+class Sms {
     protected $AT;
 
-    public function __construct($phone)
-    {
+    function __construct($phone) {
         $this->phone = $phone;
-        $apiKey = "atsk_48124c7298bdb48f9cd0429020e8b363020c2f446dd29a54bb6d12cf35eaef58b572a801";
-        $this->AT = new AfricasTalking("sandbox", $apiKey);
+       
+        $this->AT = new AfricasTalking(Util::$API_USERNAME, Util::$API_KEY);
     }
 
-    public function sendSms($message, $recipients)
-    {
-        $sms = $this->AT->sms();
-        $result = $sms->send([
-            'username' => 'sandbox',
-            'to' => $recipients,
-            'message' => $message,
-            'from' => "momoMoney"
-        ]);
-        return $result;
+    public function sendSMS($message, $recipients) {
+        try {
+            $sms = $this->AT->sms();
+            $result = $sms->send([
+                'to' => $recipients,
+                'message' => $message,
+                'from' => Util::$COMPANY_NAME
+            ]);
+            return $result;
+        } catch (Exception $e) {
+            return "Error: " . $e->getMessage();
+        }
     }
 }
