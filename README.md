@@ -1,89 +1,75 @@
-#USSD and SMS Expense Tracker System
+# **USSD and SMS Expense Tracker System**  
 A comprehensive expense tracking system that allows users to manage their finances via USSD and SMS, providing an easy-to-use interface for managing expenses and budgets.
 
-##Features
+---
 
-USSD Features
+## **FEATURES**
 
-Add Expenses
+### **USSD Features**
 
-Select from predefined categories.
+- **Add Expenses**  
+  - Select from predefined categories  
+  - Enter the amount and description  
+  - Track payment methods  
 
-Enter the amount and description.
+- **View Expenses**  
+  - View recent expenses  
+  - See detailed expenses by category  
+  - Track spending history  
 
-Track payment methods.
+- **Budget Management**  
+  - Set monthly budgets by category  
+  - View budget summaries  
+  - Track remaining budget  
 
-View Expenses
+- **User-Friendly Menu**  
+  - Simple navigation  
+  - Clear prompts for easy interaction  
 
-View recent expenses.
+---
 
-See detailed expenses by category.
+### **SMS Features**
 
-Track spending history.
+- **Quick Commands**  
+  - Check current budget balance  
+  - Get expense summary  
+  - View remaining budget  
 
-Budget Management
+- **Instant Notifications**  
+  - Budget alerts when thresholds are reached  
+  - Expense confirmations after entries  
+  - Monthly summary reports via SMS  
 
-Set monthly budgets by category.
+---
 
-View budget summaries.
+## **TECHNICAL REQUIREMENTS**
 
-Track remaining budget.
+- PHP: Version 7.4 or higher  
+- MySQL: Version 5.7 or higher  
+- Web server: Apache or Nginx  
+- SMS Gateway integration  
+- USSD Gateway integration  
 
-User-Friendly Menu
+---
 
-Simple navigation.
+## **INSTALLATION**
 
-Clear prompts for easy interaction.
-
-SMS Features
-
-Quick Commands
-
-Check current budget balance.
-
-Get expense summary.
-
-View remaining budget.
-
-Instant Notifications
-
-Budget alerts when thresholds are reached.
-
-Expense confirmations after entries.
-
-Monthly summary reports via SMS.
-
-Technical Requirements
-
-PHP: Version 7.4 or higher
-
-MySQL: Version 5.7 or higher
-
-Web server: Apache or Nginx
-
-SMS Gateway integration
-
-USSD Gateway integration
-
-Installation
-
-Step-by-Step Setup
-
-##Clone the Repository
+### **1. Clone the Repository**
+```bash
 git clone [repository-url]
 cd ussdandsms_expense-tracker-system
-Database Setup
+```
 
-##Create a MySQL database.
+---
 
-Import the expense_tracker.sql file located in the repository.
+### **2. Database Setup**
+- Create a MySQL database  
+- Import the `expense_tracker.sql` file located in the repository  
+- Configure database credentials in `config/database.php`  
 
-Configure database credentials in config/database.php.
+---
 
-##Configuration
-
-Set up SMS gateway credentials.
-
-Set up USSD gateway parameters.
-
-Update database settings in config/database.php.
+### **3. Configuration**
+- Set up SMS gateway credentials  
+- Set up USSD gateway parameters  
+- Update database settings in `config/database.php`
